@@ -22,14 +22,12 @@ public class Client {
             System.out.println("Error: Invalid number of arguments");
         }
         broadcastAddress = args[0];
-        System.out.println("broadcastAddress = " + broadcastAddress);
         try {
             broadcastPort = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
             System.out.println("Error: Could not parse broadcast port.");
             return;
         }
-        System.out.println("broadcastPort = " + broadcastPort);
         try {
             formattedAddress = InetAddress.getByName(broadcastAddress);
         } catch (UnknownHostException e) {
@@ -98,7 +96,6 @@ public class Client {
 
     public static int randomGamePort(int start, int range) {
         int gamePort = (int) (Math.random() * range) + start;
-        System.out.println("gamePort = " + gamePort);
         return gamePort;
     }
 }

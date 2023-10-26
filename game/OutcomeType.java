@@ -6,7 +6,6 @@ public enum OutcomeType {
     SUNK("SUNK"),
     GAME_OVER("GAME END");
 
-    // TODO: should probably change enum to GAME_END for consistency
     private String stringValue;
 
     OutcomeType(String stringValue) {

@@ -7,8 +7,6 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.SocketException;
 
-import javax.xml.crypto.Data;
-
 import util.Pair;
 
 public class CommunicationSystem {
@@ -49,7 +47,6 @@ public class CommunicationSystem {
         if (connection.getFirst() == null || connection.getSecond() == null)
             connection = connectAsServer(boardSize, gamePort);
 
-        System.out.println("connection = " + connection);
         return connection;
     }
 
@@ -60,20 +57,17 @@ public class CommunicationSystem {
 
         System.out.println("Listening on port " + this.listenPort);
         UdpListener listener = new UdpListener(this.listenPort);
-        packet = listener.listen(5000, buffer);
+        packet = listener.listen(30000, buffer);
 
         if (packet == null)
             return new Pair<PrintWriter, BufferedReader>(null, null);
 
-        // TODO: write newgame class and converter to avoid doing here
         String message = new String(packet.getData());
         String[] messageParts = message.split(":");
         int gamePort = Integer.parseInt(messageParts[1]);
         this.boardSize = Integer.parseInt(messageParts[2].trim());
         InetAddress serverAddress = packet.getAddress();
 
-        // TODO: Could change these exceptions to be handled as setting up a tcp
-        // connection could be reattempted isntead of immediate app shutdown
         System.out.println("Connecting to game on port " + gamePort);
         TcpClientSocket client = new TcpClientSocket(serverAddress, gamePort);
         client.connect();
@@ -94,7 +88,7 @@ public class CommunicationSystem {
 
         System.out.println("Waiting for connection");
         TcpServerSocket server = new TcpServerSocket(gamePort);
-        server.accept(5000);
+        server.accept(30000);
 
         System.out.println("Connection accepted");
         PrintWriter out = server.getOut();

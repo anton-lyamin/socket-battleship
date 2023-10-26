@@ -33,7 +33,6 @@ public class UdpListener {
             throw new IllegalArgumentException("UDP Error: Invalid port number " + this.port);
 
         } finally {
-            System.out.println("closing socket");
             if (socket != null)
                 socket.close();
         }

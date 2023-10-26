@@ -1,8 +1,5 @@
 package game;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Coordinate {
     private int row;
     private int col;

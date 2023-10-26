@@ -27,7 +27,6 @@ public class Cell {
         return ship != null;
     }
 
-    // TODO: take out user interface related code into different class.
     public String toString() {
         if (status == CellStatus.MISS)
             return ".";

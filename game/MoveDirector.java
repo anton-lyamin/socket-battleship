@@ -43,6 +43,7 @@ public class MoveDirector {
                 System.out.println(e.getMessage());
                 System.out.println("Shutting down");
                 out.println("ERROR");
+                break;
             }
 
             if (error) {
