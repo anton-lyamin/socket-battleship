@@ -1,14 +1,12 @@
+package game;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
-import game.Coordinate;
-import game.GameDisplay;
-import game.GameEngine;
-import game.GameStatus;
-import game.GridType;
-import game.MoveOutcome;
+import util.FireConverter;
+import util.MoveOutcomeConverter;
 
 public class MoveDirector {
     private GameEngine gameEngine;

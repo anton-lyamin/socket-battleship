@@ -1,3 +1,5 @@
+package util;
+
 import game.Coordinate;
 
 public class FireConverter {

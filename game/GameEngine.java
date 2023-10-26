@@ -1,13 +1,10 @@
 package game;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class GameEngine {
     private Grid playerGrid;
     private Grid opponentGrid;
-    private Ship[] playerShips = new Ship[1];
-    private Ship[] opponentShips = new Ship[1];
+    private Ship[] playerShips = new Ship[5];
+    private Ship[] opponentShips = new Ship[5];
     private GridType currentTurn = GridType.PLAYER;
     private GameStatus status = GameStatus.NO_GAME;
     private int turnCount = 0;
@@ -32,11 +29,10 @@ public class GameEngine {
     }
 
     private void createShips(Ship[] ships) {
-        // ShipType[] shipTypes = ShipType.values();
-        // for (int i = 0; i < shipTypes.length; i++) {
-        // playerShips[i] = new Ship(shipTypes[i]);
-        // }
-        ships[0] = new Ship(ShipType.PATROL);
+        ShipType[] shipTypes = ShipType.values();
+        for (int i = 0; i < shipTypes.length; i++) {
+            ships[i] = new Ship(shipTypes[i]);
+        }
     }
 
     private void createShipLayout(Grid grid, Ship[] ships) {
@@ -48,8 +44,6 @@ public class GameEngine {
         }
     }
 
-    // TODO: could do with a rewrite to decouple algorithm for placing ships from
-    // placing ships
     private boolean placeShip(Grid grid, Ship ship) {
         int gridSize = grid.getSize();
         int shipLength = ship.getType().getLength();
@@ -77,7 +71,6 @@ public class GameEngine {
     }
 
     private boolean canShipBePlaced(Grid grid, Ship ship, int row, int col, int direction) {
-        int gridSize = grid.getSize();
         int shipLength = ship.getType().getLength();
         Cell cell;
         for (int i = 0; i < shipLength; i++) {
@@ -148,7 +141,6 @@ public class GameEngine {
             return new MoveOutcome(coordinate, OutcomeType.MISS, null);
         }
 
-        // TODO: null pointer excpetion may occur, handle it
         ship = cell.getShip();
         ship.hit();
         cell.setStatus(CellStatus.HIT);
@@ -197,9 +189,9 @@ public class GameEngine {
     }
 
     private int getShipsLeft(GridType gridType) {
-        Ship[] ships = (gridType == GridType.PLAYER) ? playerShips : opponentShips;
+        Ship[] ships = (gridType == GridType.PLAYER) ? this.playerShips : this.opponentShips;
         int shipsLeft = 0;
-        for (Ship ship : playerShips) {
+        for (Ship ship : ships) {
             if (!ship.isSunk())
                 shipsLeft++;
         }

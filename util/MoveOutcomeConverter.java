@@ -1,3 +1,5 @@
+package util;
+
 import game.Coordinate;
 import game.MoveOutcome;
 import game.OutcomeType;

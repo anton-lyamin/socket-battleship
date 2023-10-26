@@ -10,12 +10,14 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
+import comms.CommunicationSystem;
 import comms.TcpClientSocket;
 import comms.TcpServerSocket;
 import comms.UdpListener;
 import comms.UdpSender;
 import game.GameEngine;
 import game.GridType;
+import game.MoveDirector;
 import util.Pair;
 
 public class TestClient2 {

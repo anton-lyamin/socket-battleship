@@ -5,7 +5,7 @@ public enum ShipType {
     BATTLESHIP(4, "Battleship"),
     CRUISER(3, "Cruiser"),
     SUBMARINE(3, "Submarine"),
-    PATROL(1, "Patrol");
+    PATROL(2, "Patrol");
 
     private int length;
     private String stringValue;

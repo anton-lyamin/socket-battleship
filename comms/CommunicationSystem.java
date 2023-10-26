@@ -1,3 +1,5 @@
+package comms;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -7,10 +9,6 @@ import java.net.SocketException;
 
 import javax.xml.crypto.Data;
 
-import comms.TcpClientSocket;
-import comms.TcpServerSocket;
-import comms.UdpListener;
-import comms.UdpSender;
 import util.Pair;
 
 public class CommunicationSystem {

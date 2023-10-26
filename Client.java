@@ -1,44 +1,47 @@
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
 import comms.CommunicationSystem;
-import comms.TcpClientSocket;
-import comms.TcpServerSocket;
-import comms.UdpListener;
-import comms.UdpSender;
 import game.GameEngine;
 import game.GridType;
 import game.MoveDirector;
 import util.Pair;
 
-public class TestClient1 {
+public class Client {
 
     public static void main(String[] args) {
-        int broadcastPort = 5000;
-        int listenPort = 6000;
-        int gamePort = 1234;
-        String address = "127.0.0.1";
-        Scanner scanner = new Scanner(System.in);
+        String broadcastAddress;
+        int broadcastPort;
+        int gamePort;
         InetAddress formattedAddress;
+
+        if (args.length != 2) {
+            System.out.println("Error: Invalid number of arguments");
+        }
+        broadcastAddress = args[0];
+        System.out.println("broadcastAddress = " + broadcastAddress);
         try {
-            formattedAddress = InetAddress.getByName(address);
+            broadcastPort = Integer.parseInt(args[1]);
+        } catch (NumberFormatException e) {
+            System.out.println("Error: Could not parse broadcast port.");
+            return;
+        }
+        System.out.println("broadcastPort = " + broadcastPort);
+        try {
+            formattedAddress = InetAddress.getByName(broadcastAddress);
         } catch (UnknownHostException e) {
-            System.out.println("Error: Could not format address due to Exception:");
+            System.out.println("Error: Bad address, chose a valid address");
             return;
         }
 
+        Scanner scanner = new Scanner(System.in);
         System.out.println("Enter board size:");
         String boardSize = scanner.nextLine();
         int boardSizeInt;
+
         try {
             boardSizeInt = Integer.parseInt(boardSize.trim());
         } catch (NumberFormatException e) {
