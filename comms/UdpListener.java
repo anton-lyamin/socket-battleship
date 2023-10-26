@@ -25,6 +25,13 @@ public class UdpListener {
             return packet;
         } catch (SocketTimeoutException e) {
             return null;
+        } catch (SocketException e) {
+            throw new SocketException("UDP Error: Could not open udp socket on port " + this.port);
+        } catch (IOException e) {
+            throw new IOException("UDP Error: Could not receive packet on port " + this.port);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("UDP Error: Invalid port number " + this.port);
+
         } finally {
             System.out.println("closing socket");
             if (socket != null)

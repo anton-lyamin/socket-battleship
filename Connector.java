@@ -40,7 +40,7 @@ public class Connector {
         }
     }
 
-    public void playGame() {
+    private void playGame() {
         boolean gameOver = false;
         boolean error = false;
 

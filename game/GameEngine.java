@@ -11,6 +11,7 @@ public class GameEngine {
     private GridType currentTurn = GridType.PLAYER;
     private GameStatus status = GameStatus.NO_GAME;
     private int turnCount = 0;
+    private int gridSize;
 
     public GameEngine() {
     }
@@ -27,6 +28,7 @@ public class GameEngine {
         this.createShipLayout(this.playerGrid, this.playerShips);
         this.status = GameStatus.IN_PROGRESS;
         this.currentTurn = whosGoesFirst;
+        this.gridSize = gridSize;
     }
 
     private void createShips(Ship[] ships) {
@@ -212,16 +214,15 @@ public class GameEngine {
         return this.getShipsLeft(GridType.OPPONENT);
     }
 
-    public boolean isCoordinateLegal(Coordinate coordinate) {
-        int row = coordinate.getRow();
-        int col = coordinate.getCol();
-        int gridsize = this.playerGrid.getSize();
-        if (row < 1 || row >= gridsize)
-            return false;
+    public int getGridSize() {
+        return this.gridSize;
+    }
 
-        if (col < 1 || col >= gridsize)
-            return false;
+    public Ship[] getOpponentShips() {
+        return this.opponentShips;
+    }
 
-        return true;
+    public Ship[] getPlayerShips() {
+        return this.playerShips;
     }
 }

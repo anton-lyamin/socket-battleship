@@ -19,23 +19,34 @@ public class TcpClientSocket {
         this.address = address;
     }
 
-    public boolean connect() throws IOException, IllegalArgumentException {
-        this.clientSocket = new Socket(this.address, this.port);
+    public void connect() throws IOException, IllegalArgumentException {
+        try {
+            this.clientSocket = new Socket(this.address, this.port);
+            this.out = new PrintWriter(this.clientSocket.getOutputStream(), true);
+        } catch (IOException e) {
+            throw new IOException("TCP Error: Could not open tcp client socket on port " + this.port);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("TCP Error: Invalid port number " + this.port);
+        } catch (Exception e) {
+            throw new IOException("TCP Error: Client connection failed");
+        }
 
-        this.out = new PrintWriter(this.clientSocket.getOutputStream(), true);
-        this.in = new BufferedReader(
-                new java.io.InputStreamReader(this.clientSocket.getInputStream()));
-        return true;
+        try {
+            this.in = new BufferedReader(
+                    new java.io.InputStreamReader(this.clientSocket.getInputStream()));
+        } catch (IOException e) {
+            throw new IOException("InputStream Error: Could not get inputstream from socket on port " + this.port);
+        }
     }
 
-    public boolean close() {
+    public void close() throws IOException {
         try {
             this.clientSocket.close();
             this.out.close();
             this.in.close();
-            return true;
+
         } catch (IOException e) {
-            return false;
+            throw new IOException("TCP Error: Could not close tcp client socket on port " + this.port);
         }
     }
 

@@ -29,6 +29,13 @@ public class TcpServerSocket {
             return true;
         } catch (SocketTimeoutException e) {
             return false;
+        } catch (SocketException e) {
+            throw new SocketException(
+                    "TCP Error: Could not open tcp server socket on port " + this.serverSocket.getLocalPort());
+        } catch (IOException e) {
+            throw new IOException("TCP Error: Could not accept connection on port " + this.serverSocket.getLocalPort());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("TCP Error: Invalid port number " + this.serverSocket.getLocalPort());
         }
     }
 

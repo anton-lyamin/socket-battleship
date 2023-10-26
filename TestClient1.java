@@ -7,13 +7,16 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.Scanner;
 
 import comms.TcpClientSocket;
 import comms.TcpServerSocket;
 import comms.UdpListener;
 import comms.UdpSender;
+import game.GameEngine;
 import game.GridType;
+import util.Pair;
 
 public class TestClient1 {
 
@@ -21,76 +24,70 @@ public class TestClient1 {
         int broadcastPort = 5000;
         int listenPort = 6000;
         int gamePort = 1234;
-        String broadcastAddress = "127.0.0.1";
+        String address = "127.0.0.1";
         Scanner scanner = new Scanner(System.in);
-
-        byte[] buffer = new byte[128];
-        DatagramPacket packet = null;
-        boolean tcpConnection = false;
+        InetAddress formattedAddress;
         try {
-            UdpListener listener = new UdpListener(listenPort);
-            System.out.println("Listening on port " + listenPort);
-            packet = listener.listen(5000, buffer);
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
+            formattedAddress = InetAddress.getByName(address);
+        } catch (UnknownHostException e) {
+            System.out.println("Error: Could not format address due to Exception:");
             return;
         }
 
-        if (packet != null) {
-            String message = new String(packet.getData());
-            System.out.println("Received message: " + message);
-            String[] messageParts = message.split(":");
-
-            if (messageParts[0].equals("NEW GAME")) {
-                System.out.println("Connecting to game on port " + messageParts[1]);
-                int port = Integer.parseInt(messageParts[1]);
-                InetAddress address = packet.getAddress();
-                Connector connector = null;
-                try {
-                    TcpClientSocket client = new TcpClientSocket(address, port);
-                    client.connect();
-                    PrintWriter out = client.getOut();
-                    BufferedReader in = client.getIn();
-                    System.out.println("hereeee");
-                    connector = new Connector(GridType.OPPONENT, out, in, scanner);
-                    connector.startGame(10);
-                    // out.println("Hello client 2");
-
-                    // String response = in.readLine();
-                    // System.out.println("Received response: " + response);
-
-                    client.close();
-                    tcpConnection = true;
-                } catch (Exception e) {
-                    System.err.println(e.getMessage());
-                }
-            }
+        System.out.println("Enter board size:");
+        String boardSize = scanner.nextLine();
+        int boardSizeInt;
+        try {
+            boardSizeInt = Integer.parseInt(boardSize.trim());
+        } catch (NumberFormatException e) {
+            System.out.println("Error: Could not parse board size.");
+            scanner.close();
+            return;
         }
 
-        if (!tcpConnection) {
-            System.out.println("No broadcast received");
-            Connector connector = null;
-            try {
-                System.out.println("broadcasting on port " + broadcastPort);
-                buffer = String.format("NEW GAME:%d:%d", gamePort, 10).getBytes();
-                UdpSender sender = new UdpSender(broadcastPort, broadcastAddress);
-                sender.send(buffer, true);
+        CommunicationSystem commSystem = new CommunicationSystem(formattedAddress, broadcastPort, listenPort);
 
-                TcpServerSocket server = new TcpServerSocket(gamePort);
-                server.accept(5000);
-                PrintWriter out = server.getOut();
-                BufferedReader in = server.getIn();
-                connector = new Connector(GridType.PLAYER, out, in, scanner);
-                connector.startGame(10);
-                // String inputLine = in.readLine();
-                // System.out.println("Received message: " + inputLine);
-                // out.println("Welcome Client 2");
-                server.close();
+        Pair<PrintWriter, BufferedReader> comms = new Pair<PrintWriter, BufferedReader>(null, null);
+        PrintWriter out = comms.getFirst();
+        BufferedReader in = comms.getSecond();
 
-            } catch (Exception e) {
-                System.err.println(e.getMessage());
+        try {
+            while (out == null || in == null) {
+                if (out != null)
+                    out.close();
+
+                if (in != null)
+                    in.close();
+
+                comms = commSystem.setupConnection(boardSizeInt, gamePort);
+                out = comms.getFirst();
+                in = comms.getSecond();
             }
+
+        } catch (Exception e) {
+            System.out.println("Error: Could not setup connection due to Exception:");
+            System.out.println(e.getMessage());
+            scanner.close();
+            return;
         }
 
+        GridType whoStarts = (commSystem.isServer()) ? GridType.PLAYER : GridType.OPPONENT;
+        GameEngine gameEngine = new GameEngine();
+
+        if (commSystem.getBoardSize() != 0)
+            boardSizeInt = commSystem.getBoardSize();
+
+        try {
+            gameEngine.newGame(boardSizeInt, whoStarts);
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+            scanner.close();
+            return;
+        }
+
+        MoveDirector moveDirector = new MoveDirector(gameEngine, out, in, scanner);
+        moveDirector.makeMove();
+
+        scanner.close();
     }
 }
