@@ -15,7 +15,7 @@ public class Client {
     public static void main(String[] args) {
         String broadcastAddress;
         int broadcastPort;
-        int gamePort;
+        int gamePort = randomGamePort(9000, 100);
         InetAddress formattedAddress;
 
         if (args.length != 2) {
@@ -50,7 +50,7 @@ public class Client {
             return;
         }
 
-        CommunicationSystem commSystem = new CommunicationSystem(formattedAddress, broadcastPort, listenPort);
+        CommunicationSystem commSystem = new CommunicationSystem(formattedAddress, broadcastPort, broadcastPort);
 
         Pair<PrintWriter, BufferedReader> comms = new Pair<PrintWriter, BufferedReader>(null, null);
         PrintWriter out = comms.getFirst();
@@ -94,5 +94,11 @@ public class Client {
         moveDirector.makeMove();
 
         scanner.close();
+    }
+
+    public static int randomGamePort(int start, int range) {
+        int gamePort = (int) (Math.random() * range) + start;
+        System.out.println("gamePort = " + gamePort);
+        return gamePort;
     }
 }
